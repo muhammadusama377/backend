@@ -1,0 +1,32 @@
+services:
+  db:
+    stdin_open: true
+    tty: true
+    image: postgres:15.5-bullseye
+    volumes:
+      - app-db-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+  backend:
+    restart: always
+    stdin_open: true
+    tty: true
+    build: .
+    volumes:
+      - .:/code
+      - static_volume:/code/staticfiles
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+volumes:
+  app-db-data:
+  static_volume:
+networks:
+  bbh-network:
